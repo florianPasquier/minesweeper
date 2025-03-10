@@ -1,4 +1,5 @@
 import pytest
+
 import src.minesweeper as minesweeper
 
 
