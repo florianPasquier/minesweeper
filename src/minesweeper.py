@@ -1,5 +1,6 @@
 """This module implements the Minesweeper game."""
 
+# minesweeper.py
 import random
 
 
@@ -16,14 +17,10 @@ class Minesweeper:
     def place_mines(self):
         """Randomly place mines on the board, updating adjacent cells with mine counts."""
         while len(self.mines) < self.num_mines:
-            row = random.randint(0, self.rows - 1)
-            col = random.randint(0, self.cols - 1)
-            if (row, col) not in self.mines:
-                self.mines.add((row, col))
-                for r in range(row - 1, row + 2):
-                    for c in range(col - 1, col + 2):
-                        if 0 <= r < self.rows and 0 <= c < self.cols:
-                            self.board[r][c] = "💣"
+            r, c = random.randint(0, self.rows - 1), random.randint(0, self.cols - 1)
+            if (r, c) not in self.mines:
+                self.mines.add((r, c))
+                self.board[r][c] = "💣"
         for r, c in self.mines:
             for i in range(r - 1, r + 2):
                 for j in range(c - 1, c + 2):
@@ -44,26 +41,28 @@ class Minesweeper:
         """
         if (row, col) in self.mines:
             return "Game Over"
-        if (row, col) in self.revealed:
-            return "Continue"
         self.revealed.add((row, col))
-        if self.board[row][col] == "💣":
-            return "Game Over"
         if self.board[row][col] == "":
-            self.board[row][col] = 0
-            for r in range(row - 1, row + 2):
-                for c in range(col - 1, col + 2):
+            self.board[row][col] = "0"
+            for i in range(row - 1, row + 2):
+                for j in range(col - 1, col + 2):
                     if (
-                        0 <= r < self.rows
-                        and 0 <= c < self.cols
-                        and (r, c) not in self.revealed
+                        0 <= i < self.rows
+                        and 0 <= j < self.cols
+                        and (i, j) not in self.revealed
                     ):
-                        self.reveal(r, c)
+                        self.reveal(i, j)
         return "Continue"
 
     def get_board(self) -> list:
         """Return the current state of the board."""
-        return self.board
+        return [
+            [
+                self.board[r][c] if (r, c) in self.revealed else " "
+                for c in range(self.cols)
+            ]
+            for r in range(self.rows)
+        ]
 
     def is_winner(self) -> bool:
         """Check if the game has been won."""
